@@ -21,3 +21,9 @@ app.get("/", (req, res) => {
 app.listen(port, () => {
   console.log(`Dummy app listening on port ${port}`);
 });
+
+process.on('SIGINT', function() {
+  console.log( "\nGracefully shutting down from SIGINT (Ctrl-C)" );
+  process.exit();
+});
+
