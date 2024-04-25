@@ -10,7 +10,7 @@ COPY --from=build /app .
 CMD [ "npm","run","develop" ]
 
 FROM node:20-alpine AS production
-USER node
 COPY --from=build /app .
 COPY . .
+RUN [ "npm","run","build" ]
 CMD [ "node","index.js" ]
