@@ -1,0 +1,43 @@
+services:
+  web:
+    hostname: mydocker
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: development
+    restart: always
+    environment:
+      PORT: "1337"
+      REDIS_HOST: "redis"
+      REDIS_PORT: "6379"
+      MYSQL_DB: "mydb"
+      MYSQL_USER: "user"
+      MYSQL_HOST: "mysql"
+      MYSQL_PORT: "3306"
+      MYSQL_PASSWORD: "root"
+      FILE_PATH_TO_CHECK: "./index.ts"
+    ports:
+      - 1337:1337
+    volumes:
+      - .:/app
+
+  mysql:
+    image: mysql
+    restart: always
+    environment:
+      MYSQL_DATABASE: "mydb"
+      MYSQL_USER: "user"
+      MYSQL_PASSWORD: "root"
+      MYSQL_ROOT_PASSWORD: "root"
+    volumes:
+      - mydb:/var/lib/mysql
+
+  redis:
+    image: redis
+    restart: always
+    #port pas obligatoire si pas besoin d'y avoir accès hors du Docker
+    ports:
+      - 6379:6379
+
+volumes:
+  mydb:
