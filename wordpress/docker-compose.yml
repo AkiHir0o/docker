@@ -2,15 +2,18 @@ services:
   wordpress:
     image: bitnami/wordpress:6
     environment:
-      WORDPRESS_USERNAME: admin
-      WORDPRESS_PASSWORD: admin
-      WORDPRESS_DATABASE_USER: "user"
-      WORDPRESS_DATABASE_HOST: "mariadb"
-      WORDPRESS_DATABASE_NAME: "wordpress_db"
-      WORDPRESS_DATABASE_PORT_NUMBER: "3306"
-      WORDPRESS_DATABASE_PASSWORD: "root"
-      REDIS_HOST: "redis"
-      REDIS_PORT: "6379"
+      WORDPRESS_USERNAME: ${WORDPRESS_USERNAME}
+      WORDPRESS_PASSWORD: ${WORDPRESS_PASSWORD}
+      WORDPRESS_DATABASE_USER: ${WORDPRESS_DATABASE_USER}
+      WORDPRESS_DATABASE_HOST: ${WORDPRESS_DATABASE_HOST}
+      WORDPRESS_DATABASE_NAME: ${MARIADB_DATABASE}
+      WORDPRESS_DATABASE_PORT_NUMBER: ${WORDPRESS_DATABASE_PORT_NUMBER}
+      WORDPRESS_DATABASE_PASSWORD: ${MARIADB_PASSWORD}
+      WORDPRESS_EXTRA_WP_CONFIG_CONTENT: |
+        /* redis-cache config */
+        define('WP_REDIS_HOST', '${WP_REDIS_HOST}');
+        define('WP_REDIS_PORT', '${WP_REDIS_PORT}');
+        define('WP_REDIS_PASSWORD', '${WP_REDIS_PASSWORD}');
     volumes:
       - "wordpress:/bitnami/wordpress"
     deploy:
@@ -21,10 +24,10 @@ services:
     image: bitnami/mariadb
     restart: always
     environment:
-      MARIADB_DATABASE: "wordpress_db"
-      MARIADB_USER: "user"
-      MARIADB_PASSWORD: "root"
-      MARIADB_ROOT_PASSWORD: "root"
+      MARIADB_DATABASE: ${MARIADB_DATABASE}
+      MARIADB_USER: ${MARIADB_USER}
+      MARIADB_PASSWORD: ${MARIADB_PASSWORD}
+      MARIADB_ROOT_PASSWORD: ${MARIADB_ROOT_PASSWORD}
     volumes:
       - mariadb:/bitnami/mariadb
 
@@ -40,6 +43,7 @@ services:
       - "443:443"
     volumes:
       - ./my_server_block.conf:/opt/bitnami/nginx/conf/server_blocks/wordpress.conf
+      - ./wp-config.php:/opt/bitnami/wordpress/wp-config.php
 
 volumes:
   mariadb: {}
