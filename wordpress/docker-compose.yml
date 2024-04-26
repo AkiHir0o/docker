@@ -1,0 +1,46 @@
+services:
+  wordpress:
+    image: bitnami/wordpress:6
+    environment:
+      WORDPRESS_USERNAME: admin
+      WORDPRESS_PASSWORD: admin
+      WORDPRESS_DATABASE_USER: "user"
+      WORDPRESS_DATABASE_HOST: "mariadb"
+      WORDPRESS_DATABASE_NAME: "wordpress_db"
+      WORDPRESS_DATABASE_PORT_NUMBER: "3306"
+      WORDPRESS_DATABASE_PASSWORD: "root"
+      REDIS_HOST: "redis"
+      REDIS_PORT: "6379"
+    volumes:
+      - "wordpress:/bitnami/wordpress"
+    deploy:
+      mode: replicated
+      replicas: 2
+
+  mariadb:
+    image: bitnami/mariadb
+    restart: always
+    environment:
+      MARIADB_DATABASE: "wordpress_db"
+      MARIADB_USER: "user"
+      MARIADB_PASSWORD: "root"
+      MARIADB_ROOT_PASSWORD: "root"
+    volumes:
+      - mariadb:/bitnami/mariadb
+
+  redis:
+    image: bitnami/redis
+    environment:
+      ALLOW_EMPTY_PASSWORD: yes
+
+  proxy:
+    image: bitnami/nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./my_server_block.conf:/opt/bitnami/nginx/conf/server_blocks/wordpress.conf
+
+volumes:
+  mariadb: {}
+  wordpress: {}
