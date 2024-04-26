@@ -34,7 +34,7 @@ services:
   redis:
     image: bitnami/redis
     environment:
-      ALLOW_EMPTY_PASSWORD: yes
+      REDIS_PASSWORD: ${WP_REDIS_PASSWORD}
 
   proxy:
     image: bitnami/nginx
